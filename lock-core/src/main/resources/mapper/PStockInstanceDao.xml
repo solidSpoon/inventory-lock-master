@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.solidspoon.lockcore.dao.PStockInstanceDao">
+    <resultMap type="xyz.solidspoon.lockcore.entity.PStockInstance" id="PStockInstanceMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="productSid" column="product_sid" jdbcType="VARCHAR"/>
+        <result property="brandName" column="brand_name" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="series" column="series" jdbcType="VARCHAR"/>
+        <result property="productCode" column="product_code" jdbcType="VARCHAR"/>
+        <result property="orderNo" column="order_no" jdbcType="VARCHAR"/>
+        <result property="faceValue" column="face_value" jdbcType="NUMERIC"/>
+        <result property="measureUnit" column="measure_unit" jdbcType="VARCHAR"/>
+        <result property="weight" column="weight" jdbcType="NUMERIC"/>
+        <result property="transferPrice" column="transfer_price" jdbcType="NUMERIC"/>
+        <result property="transferDiscount" column="transfer_discount" jdbcType="NUMERIC"/>
+        <result property="stockQuantity" column="stock_quantity" jdbcType="VARCHAR"/>
+        <result property="lockingQuantity" column="locking_quantity" jdbcType="VARCHAR"/>
+        <result property="inStockTime" column="in_stock_time" jdbcType="TIMESTAMP"/>
+        <result property="lockVersion" column="lock_version" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into test_stock.p_stock_instance(product_sid, brand_name, product_name, series, product_code, order_no,
+                                                face_value, measure_unit, weight, transfer_price, transfer_discount,
+                                                stock_quantity, locking_quantity, in_stock_time, lock_version,
+                                                create_date, update_date, del_flag)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.productSid}, #{entity.brandName}, #{entity.productName}, #{entity.series}, #{entity.productCode},
+             #{entity.orderNo}, #{entity.faceValue}, #{entity.measureUnit}, #{entity.weight}, #{entity.transferPrice},
+             #{entity.transferDiscount}, #{entity.stockQuantity}, #{entity.lockingQuantity}, #{entity.inStockTime},
+             #{entity.lockVersion}, #{entity.createDate}, #{entity.updateDate}, #{entity.delFlag})
+        </foreach>
+    </insert>
+    <!-- 批量插入或按主键更新 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into test_stock.p_stock_instance(product_sid, brand_name, product_name, series, product_code, order_no,
+                                                face_value, measure_unit, weight, transfer_price, transfer_discount,
+                                                stock_quantity, locking_quantity, in_stock_time, lock_version,
+                                                create_date, update_date, del_flag)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.productSid}, #{entity.brandName}, #{entity.productName}, #{entity.series}, #{entity.productCode},
+             #{entity.orderNo}, #{entity.faceValue}, #{entity.measureUnit}, #{entity.weight}, #{entity.transferPrice},
+             #{entity.transferDiscount}, #{entity.stockQuantity}, #{entity.lockingQuantity}, #{entity.inStockTime},
+             #{entity.lockVersion}, #{entity.createDate}, #{entity.updateDate}, #{entity.delFlag})
+        </foreach>
+        on duplicate key update product_sid       = values(product_sid),
+                                brand_name        = values(brand_name),
+                                product_name      = values(product_name),
+                                series            = values(series),
+                                product_code      = values(product_code),
+                                order_no          = values(order_no),
+                                face_value        = values(face_value),
+                                measure_unit      = values(measure_unit),
+                                weight            = values(weight),
+                                transfer_price    = values(transfer_price),
+                                transfer_discount = values(transfer_discount),
+                                stock_quantity    = values(stock_quantity),
+                                locking_quantity  = values(locking_quantity),
+                                in_stock_time     = values(in_stock_time),
+                                lock_version      = values(lock_version),
+                                create_date       = values(create_date),
+                                update_date       = values(update_date),
+                                del_flag          = values(del_flag)
+    </insert>
+
+    <select id="listLockable" resultType="xyz.solidspoon.lockcore.entity.PStockInstance">
+        SELECT a.id                                  AS "id",
+               a.product_sid                         AS "productSid",
+               a.order_no                            AS "orderNo",
+               a.transfer_price                      AS "transferPrice",
+               a.stock_quantity - a.locking_quantity AS "stockQuantity",
+               a.locking_quantity                    AS lockingQuantity
+        FROM p_stock_instance a
+        WHERE (a.stock_quantity - a.locking_quantity) > 0
+        <choose>
+            <when test="skus != null and skus.size() != 0">
+                AND a.product_sid IN
+                <foreach collection="skus" open="(" item="sku" separator="," close=")">
+                    #{sku}
+                </foreach>
+            </when>
+            <otherwise>
+                AND 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <insert id="createTempTable">
+        create temporary table temp_stock_operation
+        (
+            stock_instance_id varchar(64) unique   not null comment '库存实例ID',
+            op_num            int                  not null comment '操作数量',
+            success           tinyint(1) default 0 not null comment '是否成功'
+        );
+    </insert>
+
+    <insert id="insertTemp">
+        insert into temp_stock_operation
+            (stock_instance_id, op_num)
+        values
+        <foreach collection="operationMapping.entrySet()" item="value" index="key" separator=",">
+            (#{key}, #{value})
+        </foreach>
+    </insert>
+
+    <update id="updateStock">
+        update temp_stock_operation o inner join p_stock_instance s
+            on o.stock_instance_id = s.id
+        set o.success          = 1,
+            s.locking_quantity = s.locking_quantity + o.op_num
+        where s.stock_quantity - s.locking_quantity >= o.op_num
+          and o.success = 0;
+    </update>
+
+    <delete id="dropTempTable">
+        drop temporary table temp_stock_operation;
+    </delete>
+
+    <select id="isSuccess" resultType="java.lang.Boolean">
+        select count(*) = 0 as success
+        from temp_stock_operation
+        where success = 0;
+    </select>
+
+    <select id="operationStockBigData" resultType="java.lang.Boolean">
+        <!--        drop temporary table if exists temp_stock_operation;-->
+
+        create temporary table if not exists temp_stock_operation
+        (
+            stock_instance_id varchar(64) unique   not null comment '库存实例ID',
+            op_num            int                  not null comment '操作数量',
+            success           tinyint(1) default 0 not null comment '是否成功',
+            UNIQUE KEY `sni` (`stock_instance_id`, `op_num`, `success`)
+        ) engine = memory;
+
+        insert into temp_stock_operation
+            (stock_instance_id, op_num)
+        values
+        <foreach collection="operationMapping.entrySet()" item="value" index="key" separator=",">
+            (#{key}, #{value})
+        </foreach>;
+
+    update temp_stock_operation o join p_stock_instance s
+        on o.stock_instance_id = s.id
+    set o.success          = 1,
+        s.locking_quantity = s.locking_quantity + o.op_num,
+        s.update_date      = now()
+    where s.stock_quantity - s.locking_quantity >= o.op_num
+      and o.success = 0;
+
+    select @result := (count(*) = 0) as success
+    from temp_stock_operation
+    where success = 0;
+
+        <!--    drop temporary table temp_stock_operation;-->
+        truncate table temp_stock_operation;
+        select @result;
+    </select>
+
+    <update id="operationStockSmallData">
+        UPDATE p_stock_instance a
+        SET a.locking_quantity = CASE a.id
+        <foreach collection="operationMapping.entrySet()" item="value" index="key">
+            WHEN #{key} THEN #{value}
+        </foreach>
+        END,
+            a.update_date = now()
+        WHERE CASE a.id
+        <foreach collection="operationMapping.entrySet()" item="value" index="key">
+            WHEN #{key} THEN (a.stock_quantity - a.locking_quantity) >= #{value}
+        </foreach>
+        ELSE 0 END ;
+    </update>
+
+    <select id="summarize" resultType="xyz.solidspoon.lockcore.dto.SummarizeDTO">
+        select product_sid                            AS `key`,
+               SUM(stock_quantity - locking_quantity) AS value
+        from p_stock_instance
+        group by product_sid
+        order by count(*) DESC;
+    </select>
+</mapper>
+

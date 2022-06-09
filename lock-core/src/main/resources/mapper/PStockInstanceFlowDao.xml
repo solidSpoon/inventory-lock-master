@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.solidspoon.lockcore.dao.PStockInstanceFlowDao">
+    <resultMap type="xyz.solidspoon.lockcore.entity.PStockInstanceFlow" id="PStockInstanceFlowMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="orderNum" column="order_num" jdbcType="VARCHAR"/>
+        <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="iid" column="iid" jdbcType="VARCHAR"/>
+        <result property="currentQtyBefore" column="current_qty_before" jdbcType="INTEGER"/>
+        <result property="currentQtyAfter" column="current_qty_after" jdbcType="INTEGER"/>
+        <result property="currentQtyChange" column="current_qty_change" jdbcType="INTEGER"/>
+        <result property="lockQtyBefore" column="lock_qty_before" jdbcType="INTEGER"/>
+        <result property="lockQtyAfter" column="lock_qty_after" jdbcType="INTEGER"/>
+        <result property="lockQtyChange" column="lock_qty_change" jdbcType="INTEGER"/>
+        <result property="costPrice" column="cost_price" jdbcType="NUMERIC"/>
+        <result property="optType" column="opt_type" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+        <result property="ts" column="ts" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into test_stock.p_stock_instance_flow(id, order_num, product_id, iid, current_qty_before,
+                                                     current_qty_after,
+                                                     current_qty_change, lock_qty_before, lock_qty_after,
+                                                     lock_qty_change, cost_price, opt_type,
+                                                     create_time, update_time, status, del_flag, ts)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id}, #{entity.orderNum}, #{entity.productId}, #{entity.iid}, #{entity.currentQtyBefore},
+             #{entity.currentQtyAfter}, #{entity.currentQtyChange}, #{entity.lockQtyBefore}, #{entity.lockQtyAfter},
+             #{entity.lockQtyChange}, #{entity.costPrice},
+             #{entity.optType}, #{entity.createTime}, #{entity.updateTime}, #{entity.status}, #{entity.delFlag},
+             #{entity.ts})
+        </foreach>
+    </insert>
+    <!-- 批量插入或按主键更新 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into test_stock.p_stock_instance_flow(order_num, product_id, iid, current_qty_before, current_qty_after,
+                                                     current_qty_change, lock_qty_before, lock_qty_after,
+                                                     lock_qty_change, cost_price, opt_type,
+                                                     create_time, update_time, status, del_flag, ts)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.orderNum}, #{entity.productId}, #{entity.iid}, #{entity.currentQtyBefore},
+             #{entity.currentQtyAfter}, #{entity.currentQtyChange}, #{entity.lockQtyBefore}, #{entity.lockQtyAfter},
+             #{entity.lockQtyChange}, #{entity.costPrice},
+             #{entity.optType}, #{entity.createTime}, #{entity.updateTime}, #{entity.status}, #{entity.delFlag},
+             #{entity.ts})
+        </foreach>
+        on duplicate key update order_num          = values(order_num),
+                                product_id         = values(product_id),
+                                iid                = values(iid),
+                                current_qty_before = values(current_qty_before),
+                                current_qty_after  = values(current_qty_after),
+                                current_qty_change = values(current_qty_change),
+                                lock_qty_before    = values(lock_qty_before),
+                                lock_qty_after     = values(lock_qty_after),
+                                lock_qty_change    = values(lock_qty_change),
+                                warehouse          = values(warehouse),
+                                goods_shelves      = values(goods_shelves),
+                                cost_price         = values(cost_price),
+                                opt_type           = values(opt_type),
+                                create_time        = values(create_time),
+                                update_time        = values(update_time),
+                                status             = values(status),
+                                del_flag           = values(del_flag),
+                                ts                 = values(ts)
+    </insert>
+</mapper>
+
