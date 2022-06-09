@@ -8,9 +8,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 public class LocalTx<T> {
     private final Set<Object> tempOrderHistory = new ConcurrentSkipListSet<>();
-    private  Set<Object> orderHistory;
+    private final Set<Object> orderHistory;
 
-    private RSet<Object> rSet;
+    private final RSet<Object> rSet;
 
     public LocalTx(Set<Object> orderHistory, RSet rSet) {
         this.orderHistory = orderHistory;
