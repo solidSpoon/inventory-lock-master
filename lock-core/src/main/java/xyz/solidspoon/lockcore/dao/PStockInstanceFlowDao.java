@@ -1,10 +1,10 @@
 package xyz.solidspoon.lockcore.dao;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import xyz.solidspoon.lockcore.entity.PStockInstanceFlow;
 import org.apache.ibatis.annotations.Param;
+import xyz.solidspoon.lockcore.entity.PStockInstanceFlow;
+
+import java.util.List;
 
 /**
  * 库存流水表(PStockInstanceFlow)表数据库访问层

@@ -1,8 +1,6 @@
 package xyz.solidspoon.lockcore.handler;
 
 import org.redisson.api.RSet;
-import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.Set;

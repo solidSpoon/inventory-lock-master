@@ -1,15 +1,13 @@
 package xyz.solidspoon.lockcore.dao;
 
-import java.math.BigDecimal;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import xyz.solidspoon.lockcore.dto.SummarizeDTO;
+import xyz.solidspoon.lockcore.entity.PStockInstance;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import javafx.util.Pair;
-import xyz.solidspoon.lockcore.dto.SummarizeDTO;
-import xyz.solidspoon.lockcore.entity.PStockInstance;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * 即时库存表(PStockInstance)表数据库访问层
