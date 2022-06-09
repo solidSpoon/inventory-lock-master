@@ -1,0 +1,25 @@
+# ???
+server:
+  port: 8761
+# ????????
+eureka:
+  instance:
+    hostname: localhost
+  # ??????????????Eureka Server?????????????????????
+  server:
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 6000
+    peer-node-read-timeout-ms: 90000
+    response-cache-update-interval-ms: 5000
+  client:
+    # false表示不向注册中心注册自己。
+    register-with-eureka: false
+    # false表示自己端就是注册中心，我的职责就是维护服务实例，并不需要去检索服务
+    fetch-registry: false
+    # ?????????
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+# ????????
+spring:
+  application:
+    name: lock-eureka
