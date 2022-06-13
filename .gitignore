@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+/mysql8.0/data/
+/redis/data/
 
 ### STS ###
 .apt_generated
