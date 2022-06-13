@@ -268,8 +268,6 @@ create temporary table temp_stock_operation
     stock_instance_id varchar(64) unique   not null comment '库存实例ID', 
 ```
 
-![](UPDATE%20JOIN.svg)
-
 ### 加快消息队列读取
 扣减中心的库存扣减线程直接从消息队列读取消息效率较低，在本案例中，可以新建一个本地队列，用其他线程将消息队列中的消息搬运到本地队列，让扣减线程操作本地队列而不是消息队列，这样可以大幅提高扣减效率。
 
