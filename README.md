@@ -1,3 +1,6 @@
+# 运行项目
+如果你的电脑配置还不错，而且还安装了 Docker，可以运行 `docker-compose-init.yml`，稍后数据库与 Redis 就会初始化完成。
+
 # inventory-lock-master
 ## 背景
 希望在顾客下单时对库存明细表中的商品进行库存锁定，库存明细表简化后如下所示：
@@ -270,6 +273,3 @@ create temporary table temp_stock_operation
 
 ### 加快消息队列读取
 扣减中心的库存扣减线程直接从消息队列读取消息效率较低，在本案例中，可以新建一个本地队列，用其他线程将消息队列中的消息搬运到本地队列，让扣减线程操作本地队列而不是消息队列，这样可以大幅提高扣减效率。
-
----
-源码请见：https://github.com/solidSpoon/inventory-lock-master
