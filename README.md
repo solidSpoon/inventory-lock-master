@@ -1,7 +1,9 @@
 # 运行项目
 如果你的电脑配置还不错，而且还安装了 Docker，可以运行 `docker-compose-init.yml`，稍后数据库与 Redis 就会初始化完成。
 
-重置库存相关操作在 SQL 文件夹下
+注意必须 `mysql8.0/data` 文件夹为空才会初始化库存数据。
+
+重置库存相关操作在 SQL 文件夹下。
 
 # inventory-lock-master
 ## 背景
