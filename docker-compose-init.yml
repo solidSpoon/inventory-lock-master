@@ -17,7 +17,7 @@ services:
       TZ: Asia/Shanghai
       LANG: en_US.UTF-8
       MYSQL_ROOT_PASSWORD: root         # 设置root用户密码
-      MYSQL_DATABASE: demo              # 初始化的数据库名称
+      MYSQL_DATABASE: test_stock        # 初始化的数据库名称
     ports:                              # 映射端口
       - "3306:3306"
   redis:

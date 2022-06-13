@@ -1,4 +1,4 @@
-# 重置
+# 重置库存
 update p_stock_instance
 set stock_quantity   = 1,
     locking_quantity = 0
