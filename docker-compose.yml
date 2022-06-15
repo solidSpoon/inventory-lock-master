@@ -1,9 +1,6 @@
 # 可参考： https://hub.docker.com/_/mysql
 version: '3'
 services:
-  busybox:
-    image: busybox:latest
-    container_name: busybox-lock
   mysql:
     image: registry.cn-hangzhou.aliyuncs.com/zhengqing/mysql:8.0  # 原镜像`mysql:8.0`
     container_name: mysql8.0                                      # 容器名为'mysql8.0'
@@ -35,15 +32,15 @@ services:
     volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
       - "./redis/data:/data"
       - "./redis/config/redis.conf:/etc/redis/redis.conf"  # `redis.conf`文件内容`http://download.redis.io/redis-stable/redis.conf`
-    ports: # 映射端口
-      - "6379:6379"
+  #    ports: # 映射端口
+  #      - "6379:6379"
   lock-core:
     image: lock-core:latest
     build:
       context: ./lock-core
       dockerfile: docker.dockerfile
-    ports:
-      - "8080:8080"
+    #    ports:
+    #      - "8080:8080"
     container_name: lock-core
     restart: unless-stopped
     environment: # 设置环境变量,相当于docker run命令中的-e
@@ -56,7 +53,7 @@ services:
       dockerfile: docker.dockerfile
     ports:
       - "8761:8761"
-      - "8765:8765"
+    #      - "8765:8765"
     container_name: lock-eureka
     restart: unless-stopped
   lock-gateway:
