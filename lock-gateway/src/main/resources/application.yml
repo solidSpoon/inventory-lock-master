@@ -44,7 +44,7 @@ eureka:
     fetchRegistry: true
     # ????
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://lock-eureka:8761/eureka/
   # ????
   #eureka.client.service-url.defaultZone=http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
   #eureka.instance.instance-id=${spring.application.name}:${server.port}
