@@ -1,3 +1,7 @@
+<p align="center">
+    <br> English | <a href="README.zh.md">中文</a>
+</p>
+
 # Run the Project
 
 If your computer has a decent configuration and Docker is installed, you can run `docker-compose-init.yml`, and the database and Redis will be initialized later.
