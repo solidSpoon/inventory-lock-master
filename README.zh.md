@@ -1,3 +1,7 @@
+<p align="center">
+    <br> <a href="README.md">English</a> | 中文
+</p>
+
 # 运行项目
 如果你的电脑配置还不错，而且还安装了 Docker，可以运行 `docker-compose-init.yml`，稍后数据库与 Redis 就会初始化完成。
 
