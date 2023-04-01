@@ -50,7 +50,7 @@ WHERE CASE a.id
           ELSE 0 END;
 ```
 
-SQL 执行完毕后会返回更新行数，在程序中判断更新行数是否与预期相符即可判断是否更新成功，程序示意如下：
+After the SQL execution is completed, the number of updated rows will be returned. By comparing the number of updated rows with the expected number in the program, you can determine whether the update is successful. Here's a schematic of the program:
 
 ```java
 Integer num = pStockInstanceDao.operationStockSmallData(operationMapping);  
